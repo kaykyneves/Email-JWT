@@ -1,8 +1,10 @@
 const { PrismaClient } = require("@prisma/client");
 const express = require("express");
 const { passwordCheck } = require("../helper/bcrypt");
-const { sign } = require("../middlewares/jwt");
 const prisma = new PrismaClient();
+
+const { emailJWT } = require("../helper/emailJwt");
+
 const loginUser = async (request, response) => {
   try {
     const { emailUser, passwordUser } = request.body;
@@ -25,14 +27,20 @@ const loginUser = async (request, response) => {
       const PassHash = await passwordCheck(passwordUser, findUser.password);
 
       if (PassHash) {
-        const tokenUser = { email: emailUser, senha: passwordUser };
-        const generateToken = sign(tokenUser, 60 * 30);
 
-        response.status(200).json({ user: findUser, token: generateToken });
+        response
+          .status(200)
+          .json(
+            "SIGN IN MADE WITH SUCCESS! PLEASE CHECK OUT YOUR EMAIL, WE HAVE SENT A TOKEN FOR YOU TO USE OUR APPLICATION"
+          );
+        const jwt = await emailJWT(emailUser, passwordUser);
+
+        console.log("Email enviado com sucesso.");
+
         return;
-      } else {
-        response.status(401).json("password incorrect");
-        return;
+      }
+      else{
+        return response.status(401).json("EMAIL OR PASSWORD ARE INCORRECT")
       }
     }
   } catch {
