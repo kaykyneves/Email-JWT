@@ -11,18 +11,18 @@ async function emailJWT (emailUser, passwordUser) {
 
       const transporter = nodemailer.createTransport({
         // Configurações para enviar e-mail
-        host: 'smtp.gmail.com',
+        host: process.env.HOST_EMAIL,
         secure: true,
-        port: 465,
+        port: process.env.PORT_EMAIL,
         auth: {
-          user: 'kaykyneves42@gmail.com',
+          user: process.env.EMAIL_USER,
           pass: process.env.PASSWORD_EMAIL,
         },
       });
 
       await transporter.sendMail({
         
-        from: 'kaykyneves42@gmail.com',
+        from: process.env.EMAIL_USER,
         to: emailUser,
         subject: 'Seu token JWT',
         html: `<h1>Token</h1>
